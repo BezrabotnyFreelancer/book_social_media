@@ -1,15 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DetailView, TemplateView, ListView, CreateView
+from django.views.generic import DetailView, TemplateView, ListView, CreateView, FormView
+from django.views.generic.detail import SingleObjectMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .profile_methods import get_profile
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
-from django.contrib.auth import get_user_model
+from django.views import View
 # Create your views here.
 from .models import UserProfile, Book
-from .forms import UserProfileEdit, CreateBookForm
+from .forms import UserProfileEdit, CreateBookForm, CommentForm
 # Create your views here.
 
 
@@ -39,10 +40,46 @@ class SearchResultProfiles(ListView):
         )
 
 
-class BookDetail(DetailView):
+class CommentBookGet(DetailView):
     model = Book
     template_name = 'main/book_detail.html'
-    context_object_name = 'book'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentForm()
+        return context
+
+
+class CommentBookPost(LoginRequiredMixin, SingleObjectMixin, FormView):
+    model = Book
+    form_class = CommentForm
+    template_name = 'main/book_detail.html'
+    login_url = reverse_lazy('account_login')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        comment = form.save(commit=False)
+        comment.book = self.object
+        comment.author = get_profile(self.request)
+        comment.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        book = self.get_object()
+        return reverse('book_detail', kwargs={'pk': book.pk})
+
+
+class BookDetail(View):
+    def get(self, request, *args, **kwargs):
+        view = CommentBookGet.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = CommentBookPost.as_view()
+        return view(request, *args, **kwargs)
 
 
 class ProfileDetail(DetailView):
