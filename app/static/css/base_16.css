@@ -1,0 +1,104 @@
+h1 {
+    color: black;
+}
+
+.main_avatar {
+    width: 370px;
+    height: 400px
+}
+
+.small_avatar {
+    width: 100px;
+    height: 100px;
+}
+
+.bookcover {
+    height: 300px;
+    width: auto;
+}
+
+body {
+    min-height: 75rem;
+    padding-top: 4.5rem;
+}
+
+.container {
+    word-wrap: break-word;
+}
+
+.review {
+    max-width: 40%;
+}
+
+.bg-black {
+  background: #000;
+}
+
+.skill-block {
+  width: 30%;
+}
+
+@media (min-width: 991px) and (max-width:1200px) {
+  .skill-block {
+    padding: 32px !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .skill-block {
+    padding: 56px !important;
+  }
+}
+
+
+
+.dropbtn {
+  background-color: #1b2021;
+  color: white;
+  width: 856px;
+  font-size: 16px;
+  border: none;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  width: 300px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.button {
+      background-color: #FFFF;
+      border: 1px;
+      color: black;
+      padding: 20px 34px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 20px;
+      margin: 4px 2px;
+      cursor: pointer;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+
+.dropdown:hover .dropdown-content {display: block;}
+
+
+.dropdown:hover .dropbtn {background-color: #1b2021;}

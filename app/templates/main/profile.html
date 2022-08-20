@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ profile.user.username }}{% endblock %}
+
+{% block content %}
+<div class="row no-gutters">
+    <div class="col-md-4 col-lg-4"><img class='main_avatar' src="{{ profile.avatar.url }}"></div>
+    <div class="col-md-8 col-lg-8">
+        <div class="d-flex flex-column">
+            <div class="d-flex flex-row justify-content-between align-items-center p-5 bg-dark text-white">
+                <h3 class="display-5">{{ profile.user.username }}</h3>
+            </div>
+
+
+        <div class="dropdown">
+            <button class="dropbtn"
+               id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                Additional info  ▾
+            </button>
+            <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+                {% if profile.first_name %}<li class="dropdown-item">First name: {{ profile.first_name }}</li>{% endif %}
+                {% if profile.last_name %}<li class="dropdown-item">Last name: {{ profile.last_name }}</li>{% endif %}
+                {% if profile.status %}<li class="dropdown-item">Status: {{ profile.status }}</li>{% endif %}
+                {% if profile.country %}<li class="dropdown-item">Country: {{ profile.country }}</li>{% endif %}
+                {% if profile.city %}<li class="dropdown-item">City: {{ profile.city}}</li>{% endif %}
+                {% if profile.organization %}<li class="dropdown-item">Organization: {{ profile.organization }}</li>{% endif %}
+                {% if profile.degree %}<li class="dropdown-item">Degree: {{ profile.degree }}</li>{% endif %}
+                <li class="dropdown-item">Email: {{ profile.user.email }}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-8 col-lg-8">
+            <div class="d-flex flex-column">
+                {% for book in profile.book.all %}
+                    <a href="{{ book.get_absolute_url }}">{{ book.title }} | {{ book.genre }} </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

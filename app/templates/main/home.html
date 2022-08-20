@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Search book</h1>
+<form class="d-flex" action="{% url 'search_result_books' %}" method="get">
+    <div class="input-group rounded">
+  <input name="q" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+        </form>
+  <span class="input-group-text border-0" id="search-addon">
+    <i class="fas fa-search"></i>
+  </span>
+</div>
+<br>
+<h1>Search author</h1>
+<form class="d-flex" action="{% url 'search_result_authors' %}" method="get">
+    <div class="input-group rounded">
+  <input name="a" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+        </form>
+  <span class="input-group-text border-0" id="search-addon">
+    <i class="fas fa-search"></i>
+  </span>
+</div>
+{% endblock %}
