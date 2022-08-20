@@ -1,3 +1,5 @@
+import time
+
 from django.db import models
 from uuid import uuid4
 from django.urls import reverse
@@ -58,8 +60,9 @@ class UserProfile(models.Model):
 
 class Comment(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    author = models.CharField(max_length=16)
+    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     comment = models.TextField()
+    created_on = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.comment
