@@ -38,6 +38,9 @@
         </div>
     </div>
 </div>
-
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="btn btn-success" value="Start messaging">
+</form>
 
 {% endblock %}
