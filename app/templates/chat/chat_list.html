@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Chats{% endblock %}
+
+{% block content %}
+    <h1>Chats:</h1>
+    <hr>
+    {% for chat in chat_list %}
+    <h2><a href="{{ chat.get_absolute_url }}">{{ chat.receiver.user.username }}</a></h2>
+    <hr>
+{% endblock %}
