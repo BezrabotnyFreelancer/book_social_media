@@ -1,7 +1,5 @@
 from django import forms
 from django.forms import ModelForm
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.contrib.auth import get_user_model
 from django.forms import TextInput, Textarea
 from .models import UserProfile, Book, Comment
 
@@ -44,9 +42,5 @@ class CommentForm(ModelForm):
     class Meta:
         model = Comment
         fields = ['comment']
-        widgets = {
-            'comment': Textarea(attrs={'class': attrs['class'], 'placeholder': 'Comment'})
-        }
-        labels = {
-            'comment': 'Add comment'
-        }
+        widgets = {'comment': Textarea(attrs={'class': attrs['class'], 'placeholder': fields[0].title()})}
+        labels = {'comment': 'Add comment'}
