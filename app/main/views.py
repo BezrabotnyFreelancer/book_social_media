@@ -5,7 +5,7 @@ from django.views.generic import DetailView, TemplateView, ListView, CreateView,
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from .profile_methods import get_profile
+from .profile_methods import get_main_profile
 from django.db.models import Q
 from django.views import View
 # Create your views here.
@@ -94,7 +94,7 @@ class Settings(TemplateView):
 
 @login_required
 def create_book(request):
-    profile = get_profile(request)
+    profile = get_main_profile(request)
     if request.method == 'POST':
         book_form = CreateBookForm(request.POST, request.FILES)
         if book_form.is_valid():
@@ -121,7 +121,7 @@ def create_book(request):
 
 @login_required
 def main_profile_edit(request):
-    profile = get_profile(request)
+    profile = get_main_profile(request)
     if request.method == 'POST':
         profile_form = UserProfileEdit(request.POST, request.FILES, instance=profile)
         if profile_form.is_valid():
@@ -139,5 +139,5 @@ def main_profile_edit(request):
 
 @login_required
 def main_profile(request):
-    profile = get_profile(request)
+    profile = get_main_profile(request)
     return render(request, 'main/profile.html', {'profile': profile})
