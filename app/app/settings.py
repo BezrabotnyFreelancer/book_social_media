@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'main.apps.MainConfig',
-    'members.apps.MembersConfig'
+    'members.apps.MembersConfig',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
@@ -128,7 +129,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
+DATETIME_FORMAT = "%Y-%m-%d%H:%M"
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
