@@ -1,12 +1,9 @@
-import time
-
 from django.db import models
 from uuid import uuid4
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from django.db.models.signals import post_save
-from django.conf import settings
 # Create your models here.
 
 
