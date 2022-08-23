@@ -33,7 +33,7 @@ class UserProfile(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50, null=True, blank=True)
-    last_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     country = models.CharField(max_length=50, null=True, blank=True)
     city = models.CharField(max_length=50, null=True, blank=True)

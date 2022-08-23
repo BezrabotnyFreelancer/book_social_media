@@ -63,7 +63,7 @@ class CommentBookPost(LoginRequiredMixin, SingleObjectMixin, FormView):
     def form_valid(self, form):
         comment = form.save(commit=False)
         comment.book = self.object
-        comment.author = get_profile(self.request)
+        comment.author = get_main_profile(self.request)
         comment.save()
         return super().form_valid(form)
 
