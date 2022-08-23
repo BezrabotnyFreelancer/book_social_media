@@ -1,39 +1,46 @@
 from django.db import models
+from django.db.models import Max
 from django.contrib.auth import get_user_model
-from django.urls import reverse
-from uuid import uuid4
 # Create your models here.
-from main.models import UserProfile
-
-
-class Chat(models.Model):
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
-    sender = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='sender')
-    receiver = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='receiver')
-
-    class Meta:
-        verbose_name = 'Chat'
-        verbose_name_plural = 'Chats'
-
-    def __str__(self):
-        return f'{self.sender} {self.receiver}'
-
-    def get_absolute_url(self):
-        return reverse('chat_detail', args=[str(self.id)])
 
 
 class Message(models.Model):
-    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
-    sender_user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='sender_user')
-    receiver_user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='receiver_user')
-    message = models.TextField()
-    image = models.ImageField()
-    file = models.FileField()
-    created_on = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='user', null=True, blank=True)
+    sender = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='from_user', null=True, blank=True)
+    recipient = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='to_user', null=True, blank=True)
+    body = models.TextField(max_length=1000, blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    
+    def send_message(from_user, to_user, body):
+        sender_message = Message(
+            user=from_user,
+            sender=from_user,
+            recipient=to_user,
+            body=body,
+            is_read=True
+        )
+        sender_message.save()
+        
+        recipient_message = Message(
+            user=to_user,
+            sender=from_user,
+            recipient=from_user,
+            body=body
+        )
+        recipient_message.save()
+        
+        return sender_message
+    
+    def get_messages(user):
+        users = []
+        messages = Message.objects.filter(user=user).values('recipient').annotate(last=Max('date')).order_by('-last')
 
-    class Meta:
-        verbose_name = 'Message'
-        verbose_name_plural = 'Messages'
-
-    def __str__(self):
-        return f'{self.chat} {self.message}'
+        for message in messages:
+            users.append({
+                'user': get_user_model().objects.get(pk=message['recipient']),
+                'last': message['last'],
+                'unread': Message.objects.filter(user=user, recipient__pk=message['recipient'], is_read=False).count()
+            })
+            
+        return users
