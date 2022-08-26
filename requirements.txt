@@ -1,4 +1,4 @@
-django==4.1
+django
 mysqlclient
 django-crispy-forms
 crispy-bootstrap5
