@@ -7,7 +7,12 @@
     <div class="container">
         <div class="row">
             <div class="card col-md-12 mt-5 p-3 shadow-sm">
-                <h5>@{{ chat.recipient.user.username }}</h5>
+                <h5>@{% if chat.recipient.user.username == request.user.username %}
+                        {{ chat.user.user.username }}
+                    {% else %}
+                        {{ chat.recipient.user.username }}
+                    {% endif %}
+                </h5>
             </div>
         </div>
         {% if message_list.all.count == 0 %}
@@ -20,11 +25,10 @@
         {% for message in message_list %}
         <div class="row">
             <div class="col-md-12 my-1">
-                {% if messsage.sender_user == user %}
-                <div class="sent-message my-3">
+                <div class="sent-message my-2">
+                    <p><small><b>{{ message.sender_user.user.username }}</b> | {{ message.date }}</small></p>
                     <p> {{ message.body }}</p>
                 </div>
-                {% endif %}
             </div>
         </div>
         {% endfor %}
