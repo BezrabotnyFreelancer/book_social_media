@@ -1,18 +1,21 @@
 from django import forms
+from django.forms.models import ModelForm
 from django.forms import Textarea, TextInput
+from .models import Message
 
+attrs_parms = {'class': 'form-control'}
 
 class ChatForm(forms.Form):
     username = forms.CharField(label='Username', max_length=16, widget=TextInput(attrs={
-        'class': 'form-control',
+        'class': attrs_parms['class'],
         'placeholder': 'Input an username'
     }))
     
     
-class MessageForm(forms.Form):
-    body = forms.CharField(label='Message', widget=Textarea(attrs={
-        'class': 'form-control',
-        'placeholder': 'Write a message ...'
-    }))
-    
-    files = forms.FileField(required=False)
+class MessageForm(ModelForm):
+    class Meta:
+        model = Message
+        fields = ['body']
+        labels = {'body': 'Message'}
+        widgets = {'body': Textarea(attrs={'class': attrs_parms['class'], 'placeholder': 'Enter a message ...'})}
+   
