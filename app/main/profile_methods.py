@@ -12,3 +12,7 @@ def get_profile(username):
     user = get_user_model().objects.filter(username__icontains=username).values('id')
     profile = get_object_or_404(UserProfile, user=user[0]['id'])
     return profile
+
+def get_profile_by_id(id):
+    profile = get_object_or_404(UserProfile, id=id)
+    return profile
