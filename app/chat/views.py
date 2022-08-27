@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 from .forms import ChatForm, MessageForm
 from .models import Chat, Message
-from main.profile_methods import get_profile, get_main_profile
+from main.profile_methods import get_profile, get_main_profile, get_profile_by_id
 
 
 @login_required
@@ -97,8 +97,13 @@ def chat_detail(request, pk):
     
     # Check of the chat profiles if other user get primary key
     if user_profile == chat.user or user_profile ==  chat.recipient: 
-        message_list = Message.objects.filter(chat__pk__icontains=pk).order_by('-pk')
-        message_list.update(is_read=True)
+        message_list = Message.objects.filter(chat__pk__icontains=pk).order_by('date')
+        unread_messages = Message.objects.filter(Q(chat__pk=pk) | Q(is_read=False)).values('recipient_user')
+        recipient = unread_messages[0]['recipient_user']
+        
+        if user_profile == get_profile_by_id(recipient):
+            message_list.update(is_read=True)
+        
         form = MessageForm()
         context = {
                 'form': form,
