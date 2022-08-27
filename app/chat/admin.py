@@ -1,7 +1,14 @@
 from django.contrib import admin
-
+from django.contrib.admin import ModelAdmin, TabularInline
 # Register your models here.
-from .models import Chat, Message
+from .models import Message, Chat
 
-admin.site.register(Chat)
-admin.site.register(Message)
+class ChatMessageInline(TabularInline):
+    model = Message
+    extra = 0
+    
+class ChatModelAdmin(ModelAdmin):
+    inlines = [ChatMessageInline]
+    list_filter = ['user']
+    
+admin.site.register(Chat, ChatModelAdmin)
