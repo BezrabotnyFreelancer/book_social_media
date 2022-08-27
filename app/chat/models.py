@@ -35,7 +35,7 @@ class Message(models.Model):
     class Meta:
         verbose_name = 'Message'
         verbose_name_plural = 'Messages'
-        ordering = ['-chat']
+        ordering = ['-date']
         
     def __str__(self):
         return f'{self.chat} {self.date}'
