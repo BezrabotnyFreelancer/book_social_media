@@ -18,9 +18,16 @@ def create_chat(request):
         
         if chat_form.is_valid():
             recipient = get_profile(chat_form.cleaned_data['username'])
+
+            if sender == recipient:
+                return redirect('create_chat')
             
             if Chat.objects.filter(user=get_main_profile(request), recipient=recipient).exists():
                 chat = Chat.objects.get(user=get_main_profile(request), recipient=recipient)
+                return redirect('chat', pk=chat.pk)
+            
+            elif Chat.objects.filter(user=recipient, recipient=get_main_profile(request)).exists():
+                chat = Chat.objects.get(user=recipient, recipient=get_main_profile(request))
                 return redirect('chat', pk=chat.pk)
             
             else:
@@ -85,14 +92,18 @@ def create_message(request, pk):
         
 @login_required
 def chat_detail(request, pk):
-    user = get_main_profile(request)
+    user_profile = get_main_profile(request)
     chat = Chat.objects.get(pk=pk)
-    message_list = Message.objects.filter(chat__pk__icontains=pk)
-    form = MessageForm()
-    context = {
-            'form': form,
-            'chat': chat,
-            'message_list': message_list,
-            'user': user,
-        }
-    return render(request, 'chat/chat_detail.html', context=context) 
+    if user_profile == chat.user or user_profile ==  chat.recipient: 
+        message_list = Message.objects.filter(chat__pk__icontains=pk).order_by('-pk')
+        message_list.update(is_read=True)
+        form = MessageForm()
+        context = {
+                'form': form,
+                'chat': chat,
+                'message_list': message_list,
+                'user_profile': user_profile,
+            }
+        return render(request, 'chat/chat_detail.html', context=context)
+    else:
+        return redirect('inbox') 
