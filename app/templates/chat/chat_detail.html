@@ -7,10 +7,10 @@
     <div class="container">
         <div class="row">
             <div class="card col-md-12 mt-5 p-3 shadow-sm">
-                <h5>@{% if chat.recipient.user.username == request.user.username %}
-                        {{ chat.user.user.username }}
+		<h5>{% if chat.recipient.user.username == request.user.username %}
+			<a class="button" href="{{ chat.user.get_absolute_url }}">@{{ chat.user.user.username }}</a>
                     {% else %}
-                        {{ chat.recipient.user.username }}
+		    	<a class="button" href="{{ chat.recipient.get_absolute_url }}">@{{ chat.recipient.user.username }}</a>
                     {% endif %}
                 </h5>
             </div>
