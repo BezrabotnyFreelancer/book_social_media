@@ -94,6 +94,8 @@ def create_message(request, pk):
 def chat_detail(request, pk):
     user_profile = get_main_profile(request)
     chat = Chat.objects.get(pk=pk)
+    
+    # Check of the chat profiles if other user get primary key
     if user_profile == chat.user or user_profile ==  chat.recipient: 
         message_list = Message.objects.filter(chat__pk__icontains=pk).order_by('-pk')
         message_list.update(is_read=True)
