@@ -28,12 +28,16 @@ class UserProfileEdit(ModelForm):
 class CreateBookForm(forms.Form):
     title = forms.CharField(label='Title', max_length=50,
                             widget=TextInput(attrs={'class': attrs['class'], 'placeholder': 'Title'}))
+    
     genre = forms.CharField(label='Genre', max_length=50,
                             widget=TextInput(attrs={'class': attrs['class'], 'placeholder': 'Genre'}))
+    
     subtitle = forms.CharField(label='Subtitle', max_length=100,
                                widget=TextInput(attrs={'class': attrs['class'], 'placeholder': 'Subtitle'}))
+    
     description = forms.CharField(label='Description',
                                   widget=Textarea(attrs={'class': attrs['class'], 'placeholder': 'Description'}))
+    
     file = forms.FileField(label='File')
     cover = forms.ImageField(label='Cover', required=False)
 
