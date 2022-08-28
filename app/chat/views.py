@@ -1,8 +1,12 @@
+from urllib import request
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.views.generic import DeleteView, UpdateView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 # Create your views here.
 from .forms import ChatForm, MessageForm
 from .models import Chat, Message
@@ -58,6 +62,7 @@ def list_chats(request):
     
     return render(request, 'chat/inbox.html', context)
 
+
 @login_required
 def create_message(request, pk):
     chat = Chat.objects.get(pk=pk)
@@ -88,8 +93,40 @@ def create_message(request, pk):
         message_form = MessageForm()
         context = {'form': message_form}
         return render(request, 'chat/chat_detail.html', context)
-            
+
+class MessageEdit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = reverse_lazy('account_login')
+    fields = ('body',)
+    model = Message
+    template_name = 'chat/message_edit.html'
+    
+    def form_valid(self, form):
+        message = form.save(commit=False)
+        message.is_edit = True
+        message.save()
+        return super().form_valid(form) 
         
+    def get_success_url(self):
+        message = self.get_object()
+        return message.chat.get_absolute_url()
+    
+    def test_func(self):
+        message = self.get_object()
+        return message.sender_user == get_main_profile(self.request)
+
+class MessageDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Message
+    login_url = reverse_lazy('account_login')
+    template_name = 'chat/message_delete.html'
+    
+    def get_success_url(self):
+        message = self.get_object()
+        return message.chat.get_absolute_url()
+
+    def test_func(self):
+        message = self.get_object()
+        return message.sender_user == get_main_profile(self.request)
+    
 @login_required
 def chat_detail(request, pk):
     user_profile = get_main_profile(request)
@@ -99,10 +136,11 @@ def chat_detail(request, pk):
     if user_profile == chat.user or user_profile ==  chat.recipient: 
         message_list = Message.objects.filter(chat__pk__icontains=pk).order_by('date')
         unread_messages = Message.objects.filter(Q(chat__pk=pk) | Q(is_read=False)).values('recipient_user')
-        recipient = unread_messages[0]['recipient_user']
-        
-        if user_profile == get_profile_by_id(recipient):
-            message_list.update(is_read=True)
+        if unread_messages.count() > 0:
+            recipient = unread_messages[0]['recipient_user']
+            
+            if user_profile == get_profile_by_id(recipient):
+                message_list.update(is_read=True)
         
         form = MessageForm()
         context = {
