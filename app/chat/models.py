@@ -17,7 +17,7 @@ class Chat(models.Model):
         ordering = ['-user']
     
     def get_absolute_url(self):
-        return reverse('chat', args=[str(self.pk)])
+        return reverse('chat', args=[str(self.id)])
         
     def __str__(self):
         return f'{self.user} - {self.recipient}'
@@ -31,6 +31,7 @@ class Message(models.Model):
     body = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    is_edit = models.BooleanField(default=False)
     
     class Meta:
         verbose_name = 'Message'
