@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DetailView, TemplateView, ListView, CreateView, FormView
+from django.views.generic import DetailView, TemplateView, ListView, FormView, DeleteView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from .profile_methods import get_main_profile
 from django.db.models import Q
@@ -82,6 +82,32 @@ class BookDetail(View):
         return view(request, *args, **kwargs)
 
 
+class BookDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Book
+    login_url = reverse_lazy('account_login')
+    template_name = 'main/book_delete.html'
+    success_url = reverse_lazy('main_profile')
+    
+    def test_func(self):
+        object = self.get_object()
+        return object.author == get_main_profile(self.request) 
+    
+
+class BookEdit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Book
+    fields = ('title', 'genre', 'subtitle', 'description', 'cover')
+    login_url = reverse_lazy('account_login')
+    template_name = 'main/book_edit.html'
+    
+    def get_success_url(self):
+        book = self.get_object()
+        return book.get_absolute_url()    
+       
+    def test_func(self):
+        book = self.get_object()
+        return book.author == get_main_profile(self.request)
+    
+    
 class ProfileDetail(DetailView):
     model = UserProfile
     template_name = 'main/profile.html'
@@ -109,7 +135,7 @@ def create_book(request):
             book.save()
             profile.book.add(book)
             profile.save()
-            return HttpResponseRedirect(reverse('main_profile'))
+            return redirect('book_detail', pk=book.pk)
         else:
             context = {'form': book_form}
             return render(request, 'main/create_book.html', context)
