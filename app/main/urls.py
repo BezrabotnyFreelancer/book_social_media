@@ -10,5 +10,7 @@ urlpatterns = [
     path('profile/', views.main_profile, name='main_profile'),
     path('edit/', views.main_profile_edit, name='main_profile_edit'),
     path('settings/', views.Settings.as_view(), name='settings'),
-    path('create/book/', views.create_book, name='create_book')
+    path('create/book/', views.create_book, name='create_book'),
+    path('book/<uuid:pk>/delete/', views.BookDelete.as_view(), name='delete_book'),
+    path('book/<uuid:pk>/edit/', views.BookEdit.as_view(), name='book_edit'),
 ]
