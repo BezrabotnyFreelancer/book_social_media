@@ -7,6 +7,12 @@
         {% if book.cover %}<img src="{{ book.cover.url }}" class="bookcover" alt="{{ book.title }}">{% endif %}<br>
         <h3>{{ book.title }} | Author: <a href="{{ book.author.get_absolute_url }}">{{ book.author.user.username }}</a> | Genre: {{ book.genre }}</h3><br>
         <h5>{{ book.subtitle }}</h5><br><hr>
+        {% if request.user.username == book.author.user.username %}
+        <h5>Options:</h5>
+            <a href="{% url 'delete_book' book.id %}" class="button">Delete book post</a> |
+            <a href="{% url 'book_edit' book.id %}" class="button">Edit book post</a>
+            <hr>
+        {% endif %}
         {% if user.is_authenticated %}<h3><a href="{{ book.file.url }}">Read book</a></h3><br>{% endif %}
         <h3>Short description: </h3>
         <p>{{ book.description|linebreaks }}</p>
