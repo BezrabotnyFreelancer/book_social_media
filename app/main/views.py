@@ -81,7 +81,6 @@ class BookDetail(View):
         view = CommentBookPost.as_view()
         return view(request, *args, **kwargs)
 
-
 class BookDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Book
     login_url = reverse_lazy('account_login')
@@ -89,10 +88,9 @@ class BookDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('main_profile')
     
     def test_func(self):
-        object = self.get_object()
-        return object.author == get_main_profile(self.request) 
+        book = self.get_object()
+        return book.author == get_main_profile(self.request) 
     
-
 class BookEdit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Book
     fields = ('title', 'genre', 'subtitle', 'description', 'cover')
