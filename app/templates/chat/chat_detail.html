@@ -26,8 +26,10 @@
         <div class="row">
             <div class="col-md-12 my-1">
                 <div class="sent-message my-2">
-                    <p><small><b>{{ message.sender_user.user.username }}</b> | {{ message.date }}</small></p>
+                    <p><small><b>{{ message.sender_user.user.username }}</b> | {{ message.date }} {% if message.is_edit %}(edited){% endif %}</small></p>
                     <p> {{ message.body|linebreaks }}</p>
+                    <small><a href="{% url 'message_edit' message.id %}">Edit</a></small> |
+                    <small><a href="{% url 'message_delete' message.id %}">Delete</a></small>
                 </div>
             </div>
         </div>
