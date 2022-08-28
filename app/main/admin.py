@@ -15,4 +15,3 @@ class BookAdmin(ModelAdmin):
 
 
 admin.site.register(UserProfile)
-admin.site.register(Comment)
