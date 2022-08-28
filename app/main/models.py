@@ -6,7 +6,12 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 # Create your models here.
 
-
+def user_directory_path(instance, filename):
+    try:
+        return f'user_{instance.user.username}/{filename}'
+    except:
+        return f'user_{instance.author.user.username}/{filename}'
+    
 class Book(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     author = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='profile')
@@ -14,8 +19,8 @@ class Book(models.Model):
     genre = models.CharField(max_length=50)
     subtitle = models.CharField(max_length=100)
     description = models.TextField()
-    file = models.FileField(upload_to='book_files/')
-    cover = models.ImageField(upload_to='book_covers/', null=True, blank=True)
+    file = models.FileField(upload_to=user_directory_path)
+    cover = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -40,7 +45,7 @@ class UserProfile(models.Model):
     degree = models.CharField(max_length=50, null=True, blank=True)
     organization = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(max_length=100, null=True, blank=True)
-    avatar = models.ImageField(upload_to='avatars/', default='default.png')
+    avatar = models.ImageField(upload_to=user_directory_path, default='default.png')
     book = models.ManyToManyField(Book)
 
     def __str__(self):
