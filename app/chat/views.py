@@ -21,8 +21,11 @@ def create_chat(request):
         chat_form = ChatForm(request.POST)
         
         if chat_form.is_valid():
-            recipient = get_profile(chat_form.cleaned_data['username'])
-
+            try:
+                recipient = get_profile(chat_form.cleaned_data['username'])
+            except:
+                return render(request, 'chat/not_found_user.html')
+            
             if sender == recipient:
                 return redirect('create_chat')
             
