@@ -9,8 +9,7 @@ class Chat(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='sender_user')
     recipient = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='recipient_user')
-    has_unread = models.BooleanField(default=False)
-    
+
     class Meta:
         verbose_name = 'Chat'
         verbose_name_plural = 'Chats'
