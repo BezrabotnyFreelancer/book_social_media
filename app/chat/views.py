@@ -12,7 +12,7 @@ from .models import Chat, Message
 from main.profile_methods import get_profile, get_main_profile, get_profile_by_id
 
 
-@login_required
+@login_required(login_url='account_login')
 def create_chat(request):
     sender = get_main_profile(request)
     
@@ -53,11 +53,10 @@ def create_chat(request):
         return render(request, 'chat/create_chat.html', context)
     
 
-@login_required
+@login_required(login_url='account_login')
 def list_chats(request):
     chats = Chat.objects.filter(Q(user=get_main_profile(request)) | Q(recipient=get_main_profile(request)))
-        
-    
+
     context = {
         'chats': chats
     }
@@ -65,7 +64,7 @@ def list_chats(request):
     return render(request, 'chat/inbox.html', context)
 
 
-@login_required
+@login_required(login_url='account_login')
 def create_message(request, pk):
     chat = Chat.objects.get(pk=pk)
     
@@ -96,6 +95,7 @@ def create_message(request, pk):
         context = {'form': message_form}
         return render(request, 'chat/chat_detail.html', context)
 
+
 class MessageEdit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = reverse_lazy('account_login')
     fields = ('body',)
@@ -116,6 +116,7 @@ class MessageEdit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         message = self.get_object()
         return message.sender_user == get_main_profile(self.request)
 
+
 class MessageDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Message
     login_url = reverse_lazy('account_login')
@@ -128,14 +129,15 @@ class MessageDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         message = self.get_object()
         return message.sender_user == get_main_profile(self.request)
-    
-@login_required
+
+
+@login_required(login_url='account_login')
 def chat_detail(request, pk):
     user_profile = get_main_profile(request)
     chat = Chat.objects.get(pk=pk)
     
     # Check of the chat profiles if other user get primary key
-    if user_profile == chat.user or user_profile ==  chat.recipient: 
+    if user_profile == chat.user or user_profile == chat.recipient:
         message_list = Message.objects.filter(chat__pk__icontains=pk).order_by('date')
         unread_messages = Message.objects.filter(Q(chat__pk=pk) | Q(is_read=False)).values('recipient_user')
         if unread_messages.count() > 0:
