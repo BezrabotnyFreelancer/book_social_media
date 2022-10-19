@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-8 col-lg-8">
             <div class="d-flex flex-column">
-                {% for book in profile.book.all %}
+                {% for book in books %}
                     <a href="{{ book.get_absolute_url }}">{{ book.title }} | {{ book.genre }} </a>
                 {% endfor %}
             </div>
