@@ -25,7 +25,8 @@ class SearchResultBooks(ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
-        return Book.objects.filter(title__icontains=query)
+        books = Book.objects.filter(title__icontains=query)
+        return books
 
 
 class SearchResultProfiles(ListView):
@@ -81,6 +82,7 @@ class BookDetail(View):
         view = CommentBookPost.as_view()
         return view(request, *args, **kwargs)
 
+
 class BookDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Book
     login_url = reverse_lazy('account_login')
@@ -90,7 +92,8 @@ class BookDelete(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         book = self.get_object()
         return book.author == get_main_profile(self.request) 
-    
+
+
 class BookEdit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Book
     fields = ('title', 'genre', 'subtitle', 'description', 'cover')
@@ -111,12 +114,19 @@ class ProfileDetail(DetailView):
     template_name = 'main/profile.html'
     context_object_name = 'profile'
 
+    def get_context_data(self, **kwargs):
+        context = super(ProfileDetail, self).get_context_data(**kwargs)
+        profile = self.get_object()
+        books = Book.objects.filter(author=profile)
+        context['books'] = books
+        return context
+
 
 class Settings(TemplateView):
     template_name = 'main/settings.html'
 
 
-@login_required
+@login_required(login_url='account_login')
 def create_book(request):
     profile = get_main_profile(request)
     if request.method == 'POST':
@@ -124,15 +134,9 @@ def create_book(request):
         if book_form.is_valid():
             book = Book()
             book.author = profile
-            book.title = book_form.cleaned_data['title']
-            book.genre = book_form.cleaned_data['genre']
-            book.subtitle = book_form.cleaned_data['subtitle']
-            book.description = book_form.cleaned_data['description']
-            book.file = book_form.cleaned_data['file']
-            book.cover = book_form.cleaned_data['cover']
+            for i in book_form.cleaned_data:
+                book.__setattr__(i, book_form.cleaned_data[i])
             book.save()
-            profile.book.add(book)
-            profile.save()
             return redirect('book_detail', pk=book.pk)
         else:
             context = {'form': book_form}
@@ -143,7 +147,7 @@ def create_book(request):
         return render(request, 'main/create_book.html', context)
 
 
-@login_required
+@login_required(login_url='account_login')
 def main_profile_edit(request):
     profile = get_main_profile(request)
     if request.method == 'POST':
@@ -161,7 +165,8 @@ def main_profile_edit(request):
         return render(request, 'main/profile_edit.html', context)
 
 
-@login_required
+@login_required(login_url='account_login')
 def main_profile(request):
     profile = get_main_profile(request)
-    return render(request, 'main/profile.html', {'profile': profile})
+    books = Book.objects.filter(author=profile)
+    return render(request, 'main/profile.html', {'profile': profile, 'books': books})
