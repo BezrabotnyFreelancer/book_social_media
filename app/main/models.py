@@ -6,19 +6,21 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 # Create your models here.
 
+
 def user_directory_path(instance, filename):
     try:
         return f'user_{instance.user.username}/{filename}'
     except:
         return f'user_{instance.author.user.username}/{filename}'
-    
+
+
 class Book(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid4)
     author = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='profile')
-    title = models.CharField(max_length=50)
-    genre = models.CharField(max_length=50)
-    subtitle = models.CharField(max_length=100)
-    description = models.TextField()
+    title = models.CharField(max_length=50, blank=False, null=False)
+    genre = models.CharField(max_length=50, blank=False, null=False)
+    subtitle = models.CharField(max_length=100, blank=False, null=False)
+    description = models.TextField(blank=False, null=False)
     file = models.FileField(upload_to=user_directory_path)
     cover = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
 
@@ -46,7 +48,6 @@ class UserProfile(models.Model):
     organization = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(max_length=100, null=True, blank=True)
     avatar = models.ImageField(upload_to=user_directory_path, default='default.png')
-    book = models.ManyToManyField(Book)
 
     def __str__(self):
         return self.user.username
@@ -57,7 +58,8 @@ class UserProfile(models.Model):
     @receiver(post_save, sender=get_user_model())
     def create_profile(sender, instance, created, **kwargs):
         if created:
-            UserProfile.objects.create(user=instance)
+            new_profile = UserProfile.objects.create(user=instance)
+            new_profile.save()
 
 
 class Comment(models.Model):
