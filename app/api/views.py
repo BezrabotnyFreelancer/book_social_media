@@ -2,10 +2,7 @@ from rest_framework.generics import (
     ListAPIView,
     RetrieveUpdateAPIView,
     ListCreateAPIView,
-    RetrieveAPIView,
     RetrieveUpdateDestroyAPIView,
-    RetrieveDestroyAPIView,
-    CreateAPIView
     )
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated

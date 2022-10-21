@@ -5,6 +5,7 @@ from .models import Message
 
 attrs_parms = {'class': 'form-control'}
 
+
 class ChatForm(forms.Form):
     username = forms.CharField(label='Username', max_length=16, widget=TextInput(attrs={
         'class': attrs_parms['class'],

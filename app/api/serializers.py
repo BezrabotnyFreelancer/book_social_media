@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.models import UserProfile, Book, Comment, user_directory_path
+from main.models import UserProfile, Book, Comment
 from chat.models import Chat, Message
 from datetime import datetime
 

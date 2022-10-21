@@ -3,6 +3,7 @@ from django.contrib.admin import ModelAdmin, TabularInline
 from .models import UserProfile, Book, Comment
 # Register your models here.
 
+
 class BookCommentInline(TabularInline):
     model = Comment
     
